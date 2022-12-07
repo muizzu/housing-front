@@ -93,7 +93,7 @@ export default function Home() {
                   A list of all employments for the individual including their name, employer, start and end date.
                 </p>
               </div>
-              <div className="mt-4 flex sm:mt-0 sm:ml-4">
+              <div className="mt-4 sm:mt-0 sm:ml-4 sm:flex hidden">
                 <button
                   type="button"
                   onClick={(e) => {
