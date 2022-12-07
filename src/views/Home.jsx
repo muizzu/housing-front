@@ -1,9 +1,15 @@
 import {
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  ArrowDownIcon
 } from '@heroicons/react/20/solid';
 import jwt_decode from "jwt-decode";
 import React, { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
+import { CSVLink } from "react-csv";
+import { format,parseISO } from 'date-fns'
+
+
 
 
 
@@ -56,19 +62,28 @@ export default function Home() {
         try {
           navigate("/login");
         } catch (error) {
-          console.log(`🚀 ~ signIn error`, error);
+          console.log(`🚀 ~error`, error);
         }
       } else {
-        setError(`Error! status: ${response.status} message: ${response.message} `);
+        const result = await response.json();
+        setError(`Error! status: ${response.status} message: ${result.message} `);
       }
     }
+  };
 
-
+  const onClickLogOut = async (e) => {
+    e.preventDefault();
+    localStorage.removeItem("token");
+    try {
+      navigate("/login");
+    } catch (error) {
+      console.log(`🚀 ~error`, error);
+    }
   };
 
   return (
     <>
-      <div className="min-h-full m-2 sm:m-12 overflow-scroll">
+      <div className="min-h-full p-2 sm:p-12 overflow-scroll">
         <div className="flex flex-col">
           <main className="flex-1">
             <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
@@ -79,18 +94,21 @@ export default function Home() {
                 </p>
               </div>
               <div className="mt-4 flex sm:mt-0 sm:ml-4">
-                {/* <button
+                <button
                   type="button"
+                  onClick={(e) => {
+                    onClickLogOut(e);
+                  }}
                   className="sm:order-0 order-1 ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:ml-0"
                 >
                   Log out
-                </button> */}
+                </button>
 
               </div>
             </div>
 
 
-            {/* Projects list (only on smallest breakpoint) */}
+            {/* Employment Search */}
             <div className="my-4">
               <div className="px-4 sm:px-6 sm:w-1/2 py-2">
 
@@ -126,18 +144,28 @@ export default function Home() {
                     <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                     <span className="sr-only">Search</span>
                   </button>
+
+                  {employments.length !== 0 ? <CSVLink data={employments} className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+                    filename={"employments.csv"}>
+                    <ArrowDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    <span className="sr-only">Search</span>
+
+                  </CSVLink> : <div></div>}
                 </form>
               </div>
+
+
             </div>
 
+            {/* Error Message */}
             <div>
-              <p className="mt-2 text-sm text-gray-700">
+              <p className="mt-2 px-6 text-sm text-gray-700">
                 {error}
               </p>
             </div>
 
-            {/* Projects table (small breakpoint and up) */}
-            <div className="mt-8 flex flex-col">
+            {/* Employments table (small breakpoint and up) */}
+            <div className="mt-8 py-2 px-4 flex flex-col">
               <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
                   <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
@@ -170,8 +198,8 @@ export default function Home() {
                             </td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.member_name}</td>
                             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.employer_name}</td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.start_date}</td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.end_date}</td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{format(parseISO(person.start_date), 'dd-MM-yyyy')}</td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{format(parseISO(person.end_date), 'dd-MM-yyyy')}</td>
 
                           </tr>
                         ))}

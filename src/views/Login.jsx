@@ -21,26 +21,12 @@ export default function Login() {
   const onClickSignIn = async (e) => {
     e.preventDefault();
     if (email && password) {
-
       try {
         const options = {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: new URLSearchParams({ email: email, password: password })
+          body: JSON.stringify({ email: email, password: password })
         };
-
-        // fetch('http://localhost:4000/token', options)
-        //   .then(response => response.json())
-        //   .then(response => {
-        //     if(response.)
-        //     try {
-        //       navigate("/");
-        //     } catch (error) {
-        //       console.log(`🚀 ~ signIn error`, error);
-        //     }
-        //   })
-        //   .catch(err => console.error(err));
-
         const response = await fetch('https://housing-api.stag.mpao.mv/auth/signin', options);
         if (response.ok) {
           const result = await response.json();
